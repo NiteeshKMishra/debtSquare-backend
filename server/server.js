@@ -1,10 +1,14 @@
+require('../config/config')
 const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const { Users } = require('../models/users');
+
 
 const app = express();
+const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -18,15 +22,42 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/user', (req, res) => {
-  res.send({ username: "Niteesh" });
+app.post('/user/signup', (req, res) => {
+  var user = new Users(req.body);
+  user.email = user.email.toLowerCase();
+  user.save().then((result) => {
+    res.status(200).send(result)
+  }).catch((err) => {
+    res.status(406).send(err);
+  })
 })
 
-app.post('/login', (req, res) => {
-  console.log(req.body);
-  res.send('This is working');
+app.post('/user/verifyuser', (req, res) => {
+  var email = req.body.email.toLowerCase();
+  var contactNumber = req.body.number;
+  Users.findOne({ $or: [{ email }, { contactNumber }] }).then((user) => {
+    if (user) {
+      if (user.email.toLowerCase() === email) {
+        res.status(200).json({ message: 'Email is already in use. Please Enter another email' })
+      }
+      else {
+        res.status(200).json({ message: 'Contact Number is already in use. Please Enter another Number' })
+      }
+    }
+    else {
+      res.status(200).json({ message: 'No records found' });
+    }
+  }).catch((err) => {
+    if (err) {
+      res.status(500);
+    }
+  });
 })
 
-app.listen(3000, () => {
-  console.log('Server started on port 3000');
+app.post('user/login', (req, res) => {
+  console.log()
+})
+
+app.listen(PORT, () => {
+  console.log('Server started on port ' + PORT);
 })
