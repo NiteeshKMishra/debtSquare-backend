@@ -1,13 +1,10 @@
 require('../config/config');
-const { mongoose } = require('../models/mongoose');
 
 const path = require('path');
 const crypto = require('crypto');
-
 const multer = require('multer');
 const gridFsStorage = require('multer-gridfs-storage');
 
-const conn = mongoose.connection
 
 //create storage for gridfs
 var storage = new gridFsStorage({
@@ -32,4 +29,4 @@ var storage = new gridFsStorage({
 
 const upload = multer({ storage });
 
-module.exports = { upload, conn }
+module.exports = { upload }

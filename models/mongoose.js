@@ -1,5 +1,5 @@
 require('../config/config');
-const { logMessages } = require('../logging/logger')
+const { logMessages } = require('../utils/logger')
 const mongoose = require('mongoose');
 
 mongoose.set('useCreateIndex', true);
