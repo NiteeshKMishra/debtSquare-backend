@@ -3,10 +3,5 @@
 
 #configuration
 /config/config.json
-
-#log file
 /logging/logs.json
-
-#playground file
-
 /server/playground.js
