@@ -32,9 +32,9 @@ var UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  imageUrl: {
-    type: String,
-    required: true
+  imageId: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: null
   },
   dob: {
     type: String,

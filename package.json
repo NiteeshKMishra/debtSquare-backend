@@ -10,11 +10,18 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "bunyan": "^1.8.12",
+    "bunyan-express-serializer": "^1.0.0",
+    "dotenv": "^8.1.0",
     "express": "^4.16.4",
+    "express-request-id": "^1.4.1",
+    "gridfs-stream": "^1.1.1",
     "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
     "mongodb": "^3.2.2",
     "mongoose": "^5.4.20",
     "multer": "^1.4.1",
+    "multer-gridfs-storage": "^3.2.3",
     "validator": "^10.11.0"
   }
 }
