@@ -10,34 +10,32 @@ conn.once('open', () => {
   gfs.collection('ProfilePics');
 });
 
-const uploadPic = (req, res, next) => {
+const uploadPic = async (req, res) => {
   if (!req.file || req.file.length === 0) {
     res.status(406).send()
   }
   res.status(200).send(req.file);
 }
 
-const getProfilepic = (req, res, next) => {
+const getProfilepic = async (req, res) => {
   var _id = mongodb.ObjectID(req.params.id);
-  gfs.files.findOne({ _id: _id })
-    .then((file) => {
-      const readStream = gfs.createReadStream(file.filename);
-      readStream.pipe(res)
-    })
-    .catch((err) => {
-      res.status(404).send()
-    });
+  try {
+    const file = await gfs.files.findOne({ _id: _id });
+    const readStream = gfs.createReadStream(file.filename);
+    readStream.pipe(res)
+  } catch (error) {
+    res.status(404).send()
+  }
 }
 
-const deletePic = (req, res, next) => {
+const deletePic = async (req, res) => {
   var _id = mongodb.ObjectID(req.query.id);
-  gfs.remove({ _id: _id, root: 'ProfilePics' })
-    .then((info) => {
-      res.status(200).send()
-    })
-    .catch((err) => {
-      res.status(404).send()
-    });
+  try {
+    await gfs.remove({ _id: _id, root: 'ProfilePics' })
+    res.status(200).send()
+  } catch (error) {
+    res.status(404).send()
+  }
 }
 
 module.exports = { uploadPic, getProfilepic, deletePic }

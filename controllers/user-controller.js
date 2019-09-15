@@ -1,6 +1,6 @@
 const { Users } = require('../models/user-model');
 
-const userSignup = (req, res, next) => {
+const userSignup = async (req, res) => {
   var user = req.body;
   if (user.imageId === '' || !user.imageId) {
     user.imageId = null;
@@ -8,27 +8,39 @@ const userSignup = (req, res, next) => {
   else {
     user.imageId = mongodb.ObjectID(user.imageId);
   }
-  var newuser = new Users(user);
-  newuser.save().then((result) => {
+  try {
+    var newuser = new Users(user)
+    const result = await newuser.save()
     res.status(201).send(result)
-  }).catch((err) => {
-    res.status(406).send();
-  })
+  } catch (error) {
+    res.status(406).send(error.message);
+  }
 }
 
-const verifyCredentials = (req, res, next) => {
+const userSignin = async (req, res) => {
+  try {
+    const user = await Users.findByCredentials(req.body.loginId, req.body.password)
+    const token = await user.generateToken()
+    res.status(200).send({ user, token })
+  } catch (error) {
+    res.status(404).send(error.message)
+  }
+}
+
+const verifyCredentials = async (req, res) => {
   var email = req.body.email.toLowerCase();
   var contactNumber = req.body.number;
-  Users.findOne({ $or: [{ email }, { contactNumber }] }).then((user) => {
+  try {
+    const user = await Users.findOne({ $or: [{ email }, { contactNumber }] })
     if (user) {
       res.status(409).send()
     }
     else {
       res.status(202).send()
     }
-  }).catch((err) => {
-    res.status(404).send();
-  });
+  } catch (error) {
+    res.status(404).send(error);
+  }
 }
 
-module.exports = { userSignup, verifyCredentials }
+module.exports = { userSignup, verifyCredentials, userSignin }

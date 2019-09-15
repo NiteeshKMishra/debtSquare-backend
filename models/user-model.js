@@ -1,4 +1,8 @@
-const validator = require('validator');
+require('../config/config')
+const validator = require('validator')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+
 const { mongoose } = require('./mongoose');
 
 var UserSchema = new mongoose.Schema({
@@ -61,8 +65,47 @@ var UserSchema = new mongoose.Schema({
   city: {
     type: String,
     required: true
+  },
+  token: {
+    type: String,
+    default: null
   }
 });
+
+UserSchema.pre('save', async function (next) {
+  const user = this
+  if (user.isModified('password')) {
+    const pass = await bcrypt.hash(user.password, 8)
+    user.password = pass
+    next()
+  }
+  next()
+})
+
+UserSchema.methods.generateToken = async function () {
+  const user = this
+  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_PASS);
+  user.token = token
+  await user.save()
+  return token
+}
+
+UserSchema.statics.findByCredentials = async (loginId, password) => {
+  var flag = typeof loginId === 'string' ? 'e' : 'n'
+  if (flag === 'e') {
+    var user = await Users.findOne({ email: loginId })
+  } else {
+    var user = await Users.findOne({ contactNumber: loginId })
+  }
+  if (!user) {
+    throw new Error('User Not Found')
+  }
+  const isMatch = await bcrypt.compare(password, user.password)
+  if (!isMatch) {
+    throw new Error('User Not Found')
+  }
+  return user
+}
 
 var Users = mongoose.model('Users', UserSchema);
 
