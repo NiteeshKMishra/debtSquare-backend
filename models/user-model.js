@@ -1,7 +1,9 @@
 require('../config/config')
+
 const validator = require('validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const _ = require('lodash')
 
 const { mongoose } = require('./mongoose');
 
@@ -66,10 +68,12 @@ var UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  token: {
-    type: String,
-    default: null
-  }
+  tokens: [{
+    token: {
+      type: String,
+      default: null
+    }
+  }]
 });
 
 UserSchema.pre('save', async function (next) {
@@ -82,10 +86,18 @@ UserSchema.pre('save', async function (next) {
   next()
 })
 
+UserSchema.methods.toJSON = function () {
+  const user = this
+  const userObject = user.toObject()
+  delete userObject.password
+  delete userObject.tokens
+  return userObject
+}
+
 UserSchema.methods.generateToken = async function () {
   const user = this
-  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_PASS);
-  user.token = token
+  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET);
+  user.tokens = user.tokens.concat({ token })
   await user.save()
   return token
 }
