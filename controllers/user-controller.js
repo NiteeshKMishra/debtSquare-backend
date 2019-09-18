@@ -11,9 +11,9 @@ const userSignup = async (req, res) => {
   try {
     var newuser = new Users(user)
     const result = await newuser.save()
-    res.status(201).send(result)
+    res.status(201).send({ user: result, message: 'Successfully signed up user' })
   } catch (error) {
-    res.status(406).send(error.message);
+    res.status(406).send({ message: error.message });
   }
 }
 
@@ -22,14 +22,14 @@ const userSignin = async (req, res) => {
     const user = await Users.findByCredentials(req.body.loginId, req.body.password)
     const token = await user.generateToken()
     res.setHeader('Authorization', `Bearer ${token}`)
-    res.status(200).send({ user, token })
+    res.send({ user, token, message: 'Successfully signed in' })
   } catch (error) {
-    res.status(404).send(error.message)
+    res.status(404).send({ message: error.message })
   }
 }
 
 const userProfile = async (req, res) => {
-  res.status(200).send(req.user)
+  res.send({ user: req.user, message: "User's profile retrieved successfully" })
 }
 
 const userUpdate = async (req, res) => {
@@ -37,14 +37,14 @@ const userUpdate = async (req, res) => {
   const allowUpdates = ["imageId", "password", "firstName", "lastName", "contactNumber", "email", "dob", "sex", "city"]
   const isValidUpdate = updates.every((update) => allowUpdates.includes(update))
   if (!isValidUpdate) {
-    return res.status(400).send()
+    return res.status(400).send({ message: 'Updates is/are invalid' })
   }
   try {
     updates.forEach((update) => req.user[update] = req.body[update])
     await req.user.save()
-    res.send(req.user)
+    res.send({ user: req.user, message: 'User updated successfully' })
   } catch (error) {
-    res.status(400).send(error.message)
+    res.status(400).send({ message: error.message })
   }
 }
 
@@ -53,14 +53,12 @@ const verifyCredentials = async (req, res) => {
   var contactNumber = req.body.number;
   try {
     const user = await Users.findOne({ $or: [{ email }, { contactNumber }] })
-    if (user) {
-      res.status(409).send()
+    if (!user) {
+      return res.status(202).send({ message: "Email Id and/or Contact Number can be used" })
     }
-    else {
-      res.status(202).send()
-    }
+    res.status(409).send({ message: "Email Id and/or Contact Number is already present in database" })
   } catch (error) {
-    res.status(404).send(error);
+    res.status(404).send({ message: error.message });
   }
 }
 
@@ -70,18 +68,18 @@ const logout = async (req, res) => {
       return token.token != req.token
     })
     await req.user.save()
-    res.send()
+    res.send({ message: 'Logged Out Successfully' })
   } catch (error) {
-    res.status(500).send()
+    res.status(500).send({ message: error.message })
   }
 }
 
 const userDelete = async (req, res) => {
   try {
     const user = await Users.findByIdAndDelete(req.user._id)
-    res.send(user)
+    res.send({ user, message: 'Successfully deleted user' })
   } catch (error) {
-    res.status(500).send()
+    res.status(500).send({ message: error.message })
   }
 }
 

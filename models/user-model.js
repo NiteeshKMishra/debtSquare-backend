@@ -31,9 +31,7 @@ var UserSchema = new mongoose.Schema({
   contactNumber: {
     type: Number,
     required: true,
-    unique: true,
-    minlength: 10,
-    maxlength: 10
+    unique: true
   },
   email: {
     type: String,
@@ -110,11 +108,11 @@ UserSchema.statics.findByCredentials = async (loginId, password) => {
     var user = await Users.findOne({ contactNumber: loginId })
   }
   if (!user) {
-    throw new Error('User Not Found')
+    throw new Error('User Not Found. Unable to Sign in')
   }
   const isMatch = await bcrypt.compare(password, user.password)
   if (!isMatch) {
-    throw new Error('User Not Found')
+    throw new Error('User Not Found. Unable to Sign in')
   }
   return user
 }

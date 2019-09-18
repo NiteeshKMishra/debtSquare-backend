@@ -3,5 +3,5 @@
 
 #configuration
 /config/config.json
-/logs.json
+/logs.log
 /playground

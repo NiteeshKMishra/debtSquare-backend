@@ -1,7 +1,7 @@
 const gridFsStream = require('gridfs-stream');
-const mongodb = require('mongodb');
 
 const { mongoose } = require('../models/mongoose')
+
 
 const conn = mongoose.connection
 var gfs;
@@ -12,29 +12,43 @@ conn.once('open', () => {
 
 const uploadPic = async (req, res) => {
   if (!req.file || req.file.length === 0) {
-    res.status(406).send()
+    return res.status(406).send({ message: "Unable to upload pic" })
   }
-  res.status(200).send(req.file);
+  try {
+    req.user.imageId = req.file.id
+    await req.user.save()
+    res.send({ file: req.file, message: 'Profile pic added successfully' })
+  } catch (error) {
+    res.status(406).send({ message: error.message })
+  }
 }
 
 const getProfilepic = async (req, res) => {
-  var _id = mongodb.ObjectID(req.params.id);
   try {
-    const file = await gfs.files.findOne({ _id: _id });
+    const found = await gfs.exist({ _id: req.user.imageId, root: 'ProfilePics' })
+    if (!found) {
+      return res.status(404).send({ message: "No Profile pic found" })
+    }
+    const file = await gfs.files.findOne({ _id: req.user.imageId });
     const readStream = gfs.createReadStream(file.filename);
     readStream.pipe(res)
   } catch (error) {
-    res.status(404).send()
+    res.status(404).send({ message: error.message })
   }
 }
 
 const deletePic = async (req, res) => {
-  var _id = mongodb.ObjectID(req.query.id);
   try {
-    await gfs.remove({ _id: _id, root: 'ProfilePics' })
-    res.status(200).send()
+    const found = await gfs.exist({ _id: req.user.imageId, root: 'ProfilePics' })
+    if (!found) {
+      return res.status(404).send({ message: "No files to delete" })
+    }
+    await gfs.remove({ _id: req.user.imageId, root: 'ProfilePics' })
+    req.user.imageId = null
+    await req.user.save()
+    res.status(200).send({ message: "Successfully removed profile pic" })
   } catch (error) {
-    res.status(404).send()
+    res.status(404).send({ message: error.message })
   }
 }
 

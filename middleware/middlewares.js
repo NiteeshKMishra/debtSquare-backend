@@ -21,7 +21,7 @@ const reqLogger = (req, res, next) => {
   next();
 }
 
-const resLogger = (req, res, next) => {
+const resLogger = async (req, res, next) => {
   function afterResponse() {
     res.removeListener('finish', afterResponse);
     res.removeListener('close', afterResponse);
@@ -31,10 +31,10 @@ const resLogger = (req, res, next) => {
       method: req.method
     }, true)
     if (res.statusCode < 400) {
-      log.info(`Response from Endpoint url ${req.url} is successfull`)
+      log.info(res.__morgan_body_response.message)
     }
     else {
-      log.error(`Request sent is/has ${res.statusMessage}`)
+      log.error(res.__morgan_body_response.message)
     }
   }
   res.on('finish', afterResponse);
@@ -51,8 +51,8 @@ const genError = (req, res, next) => {
 const errorHandler = (error, req, res, next) => {
   res.status(error.status || 500)
   logMessages('fail', error.message)
-  res.json({
-    error: error.message
+  res.send({
+    message: error.message
   })
 }
 

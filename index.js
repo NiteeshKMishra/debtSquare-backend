@@ -3,6 +3,7 @@ require('./config/config')
 const express = require('express');
 const bodyParser = require('body-parser');
 const addRequestId = require('express-request-id')();
+const morganbody = require('morgan-body');
 
 const userRoutes = require('./routes/user-route')
 const { logMessages } = require('./utils/logger')
@@ -11,9 +12,10 @@ const { cors, reqLogger, resLogger, genError, errorHandler } = require('./middle
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(addRequestId);
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
+app.use(addRequestId);
+morganbody(app);
 app.use(cors);
 app.use(reqLogger);
 app.use(resLogger);
