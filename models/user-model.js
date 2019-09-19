@@ -3,7 +3,6 @@ require('../config/config')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const _ = require('lodash')
 
 const { mongoose } = require('./mongoose');
 

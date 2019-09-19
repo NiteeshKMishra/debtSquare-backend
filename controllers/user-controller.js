@@ -29,12 +29,12 @@ const userSignin = async (req, res) => {
 }
 
 const userProfile = async (req, res) => {
-  res.send({ user: req.user, message: "User's profile retrieved successfully" })
+  res.send({ user: req.user, message: 'User profile retrieved successfully' })
 }
 
 const userUpdate = async (req, res) => {
   const updates = Object.keys(req.body)
-  const allowUpdates = ["imageId", "password", "firstName", "lastName", "contactNumber", "email", "dob", "sex", "city"]
+  const allowUpdates = ['imageId', 'password', 'firstName', 'lastName', 'contactNumber', 'email', 'dob', 'sex', 'city']
   const isValidUpdate = updates.every((update) => allowUpdates.includes(update))
   if (!isValidUpdate) {
     return res.status(400).send({ message: 'Updates is/are invalid' })
@@ -54,9 +54,9 @@ const verifyCredentials = async (req, res) => {
   try {
     const user = await Users.findOne({ $or: [{ email }, { contactNumber }] })
     if (!user) {
-      return res.status(202).send({ message: "Email Id and/or Contact Number can be used" })
+      return res.status(202).send({ message: 'Email Id and/or Contact Number can be used' })
     }
-    res.status(409).send({ message: "Email Id and/or Contact Number is already present in database" })
+    res.status(409).send({ message: 'Email Id and/or Contact Number is already present in database' })
   } catch (error) {
     res.status(404).send({ message: error.message });
   }
