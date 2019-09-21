@@ -1,4 +1,4 @@
-require('../config/config');
+require('../../config/config');
 const { logMessages } = require('../utils/logger')
 const mongoose = require('mongoose');
 

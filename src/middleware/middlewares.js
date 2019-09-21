@@ -30,7 +30,10 @@ const resLogger = async (req, res, next) => {
       status: res.statusCode,
       method: req.method
     }, true)
-    if (res.statusCode < 400) {
+    if (req.method === 'GET' && req.url === '/user/profilepic') {
+      log.info('Successfully retrieved Image')
+    }
+    else if (res.statusCode < 400) {
       log.info(res.__morgan_body_response.message)
     }
     else {

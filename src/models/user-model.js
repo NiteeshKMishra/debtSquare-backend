@@ -1,4 +1,4 @@
-require('../config/config')
+require('../../config/config')
 
 const validator = require('validator')
 const bcrypt = require('bcrypt')
@@ -88,6 +88,7 @@ UserSchema.methods.toJSON = function () {
   const userObject = user.toObject()
   delete userObject.password
   delete userObject.tokens
+  delete userObject.__v
   return userObject
 }
 

@@ -5,7 +5,7 @@ const logger = bunyan.createLogger({
   name: 'DebtSquare Logger',
   level: 'info',
   streams: [{
-    path: path.resolve(__dirname, '..', 'logs.log')
+    path: path.resolve(__dirname, '..', '..', 'logs.log')
   }],
   serializers: {
     req: require('bunyan-express-serializer'),

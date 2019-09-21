@@ -1,4 +1,4 @@
-require('../config/config');
+require('../../config/config');
 
 const path = require('path');
 const crypto = require('crypto');

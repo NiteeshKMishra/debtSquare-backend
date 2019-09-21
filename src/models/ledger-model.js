@@ -1,8 +1,14 @@
 const { mongoose } = require('./mongoose')
 
 const LedgerSchema = new mongoose.Schema({
+  ownerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    unique: true,
+    ref: 'Users'
+  },
   ledger: [{
-    _id: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       unique: true,
       ref: 'Users'
@@ -10,6 +16,9 @@ const LedgerSchema = new mongoose.Schema({
     amount: {
       type: Number,
       default: 0
+    },
+    updatedAt: {
+      type: Number
     }
   }]
 })

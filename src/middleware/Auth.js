@@ -1,4 +1,4 @@
-require('../config/config')
+require('../../config/config')
 const { Users } = require('../models/user-model')
 const jwt = require('jsonwebtoken')
 

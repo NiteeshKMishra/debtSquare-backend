@@ -5,7 +5,7 @@ const { Auth } = require('../middleware/Auth')
 
 const { addLedger, getLedger, updateLedger, deleteLedger } = require('../controllers/ledger-controller')
 
-router.post('/ledger/addledger', addLedger)
+router.post('/ledger/addledger', Auth, addLedger)
 
 router.get('/ledger/getledger', Auth, getLedger)
 
