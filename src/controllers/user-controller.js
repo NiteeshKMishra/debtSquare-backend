@@ -1,4 +1,5 @@
 const { Users } = require('../models/user-model');
+const { sendWelcomeEmail } = require('../utils/send-mail')
 
 const userSignup = async (req, res) => {
   var user = req.body;
@@ -11,6 +12,7 @@ const userSignup = async (req, res) => {
   try {
     var newuser = new Users(user)
     const result = await newuser.save()
+    await sendWelcomeEmail(result)
     res.status(201).send({ user: result, message: 'Successfully signed up user' })
   } catch (error) {
     res.status(406).send({ message: error.message });
