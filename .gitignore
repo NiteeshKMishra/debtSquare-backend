@@ -3,5 +3,10 @@
 
 #configuration
 /config/config.json
+
+#logs
 /logs.log
+
+#other-files
 /playground
+/tests/fixtures/mypic.jpg

@@ -4,7 +4,7 @@
   "description": "DebtSquare Backend",
   "main": "index.js",
   "scripts": {
-    "test": "export NODE_ENV=test || SET NODE_ENV=test && jest --watch"
+    "test": "SET NODE_ENV=test&&jest --watch --runInBand"
   },
   "jest": {
     "testEnvironment": "node"

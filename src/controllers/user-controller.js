@@ -70,7 +70,7 @@ const logout = async (req, res) => {
     await req.user.save()
     res.send({ message: 'Logged Out Successfully' })
   } catch (error) {
-    res.status(500).send({ message: error.message })
+    res.status(400).send({ message: error.message })
   }
 }
 

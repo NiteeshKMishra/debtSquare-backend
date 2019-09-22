@@ -18,9 +18,6 @@ const getLedger = async (req, res) => {
     const userLedger = await Ledger.findOne({ 'ownerId': req.user._id })
     await userLedger.populate('ledger.userId')
       .execPopulate()
-    if (!userLedger) {
-      return res.status(404).send({ message: 'No ledger record found' })
-    }
     res.send({ Ledger: userLedger, message: 'User Ledger retrieved Successfully' })
   } catch (error) {
     res.status(400).send({ message: error.message })
@@ -59,6 +56,18 @@ const updateLedger = async (req, res) => {
     res.status(400).send({ message: error.message })
   }
 }
+const deleteOneRecord = async (req, res) => {
+  try {
+    const userLedger = await Ledger.findOne({ ownerId: req.user._id })
+    userLedger.ledger = userLedger.ledger.filter((ledger) => {
+      return ledger.userId != req.body.id
+    })
+    const ledger = await userLedger.save()
+    res.send({ ledger, message: 'Successfully deleted Ledger Record' })
+  } catch (error) {
+    res.status(400).send({ message: error.message })
+  }
+}
 
 const deleteLedger = async (req, res) => {
   try {
@@ -72,4 +81,4 @@ const deleteLedger = async (req, res) => {
   }
 }
 
-module.exports = { addLedger, getLedger, updateLedger, deleteLedger }
+module.exports = { addLedger, getLedger, updateLedger, deleteOneRecord, deleteLedger }

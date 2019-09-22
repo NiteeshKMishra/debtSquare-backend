@@ -10,6 +10,7 @@ const LedgerSchema = new mongoose.Schema({
   ledger: [{
     userId: {
       type: mongoose.Schema.Types.ObjectId,
+      required: true,
       unique: true,
       ref: 'Users'
     },
